@@ -1,7 +1,8 @@
 import discord
 import asyncio
+from time import sleep
 from discord.ext import commands
-from ytomp3 import give_link, download_vid, find_music_name, remove_all_files
+from ytomp3 import give_link, download_vid, find_music_name, remove_all_files, delete_selected_file
 
 
 class Music(commands.Cog):

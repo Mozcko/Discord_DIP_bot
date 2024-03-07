@@ -39,3 +39,6 @@ def find_music_name():
 def remove_all_files(dir):
     for f in os.listdir(dir):
         os.remove(os.path.join(dir, f))
+
+def delete_selected_file(dir):
+    os.remove(os.path.join(dir))
