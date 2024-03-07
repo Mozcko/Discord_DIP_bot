@@ -18,7 +18,7 @@ class Chat(commands.Cog):
         )
 
     @commands.command()
-    async def gpt(self, ctx, *,message):
+    async def ask(self, ctx, *,message):
         output = self.client.chat.completions.create(model='gpt-3.5-turbo',
                                                      messages=[
                                                          {"role": "user",

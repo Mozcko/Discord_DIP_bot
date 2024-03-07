@@ -17,7 +17,7 @@ class Music(commands.Cog):
             await ctx.send("Playback paused.")  # sending confirmation on  channel
         else:
             await ctx.send(
-                '[-] An error occured: You have to be in voice channel to use this commmand')  # if you are not in vc
+                '[-] An error occured: You have to be in voice channel to use this command')  # if you are not in vc
 
     @commands.command()
     async def resume(self, ctx):
@@ -26,7 +26,7 @@ class Music(commands.Cog):
             await ctx.send("Playback resumed.")  # sending confirmation on  channel
         else:
             await ctx.send(
-                '[-] An error occured: You have to be in voice channel to use this commmand')  # if you are not in vc
+                '[-] An error occured: You have to be in voice channel to use this command')  # if you are not in vc
 
     @commands.command()
     async def leave(self, ctx):
