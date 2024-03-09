@@ -29,5 +29,5 @@ class Chat(commands.Cog):
         await ctx.send(output.choices[0].message.content)
         await ctx.message.add_reaction('')  #agrega un emoji
 
-def setup(client):
-    client.add_cog(Chat(client))
+async def setup(client):
+    await client.add_cog(Chat(client))

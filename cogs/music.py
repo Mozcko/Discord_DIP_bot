@@ -78,5 +78,5 @@ class Music(commands.Cog):
             await ctx.send(f'Error: {e}')  # sending error
 
 
-def setup(client):
-    client.add_cog(Music(client))
+async def setup(client):
+    await client.add_cog(Music(client))

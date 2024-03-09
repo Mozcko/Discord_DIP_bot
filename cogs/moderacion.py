@@ -66,5 +66,5 @@ class Mod(commands.Cog):
 
 
 # carga la extencion al cliente principal
-def setup(client):
-    client.add_cog(Mod(client))
+async def setup(client):
+    await client.add_cog(Mod(client))

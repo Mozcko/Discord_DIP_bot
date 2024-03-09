@@ -21,6 +21,11 @@ async def on_ready():
         print('Discord bot succesfully connected')
     except:
         print("[!] Couldn't connect, an Error occured")
+    
+    # carga el resto de comandos
+    for filename in os.listdir("./cogs"):
+        if filename.endswith(".py"):
+            await client.load_extension(f"cogs.{filename[:-3]}")
 
 
 # carga los emogis y prepara algunas cosas
@@ -32,11 +37,6 @@ async def setup(ctx):
     await ctx.send("Setup completo")
     await ctx.message.add_reaction('')
 
-
-# carga el resto de comandos
-for filename in os.listdir("./cogs"):
-    if filename.endswith(".py"):
-        client.load_extension(f"cogs.{filename[:-3]}")
 
 if __name__ == '__main__':
     client.run(os.getenv("TOKEN"))
