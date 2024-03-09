@@ -18,9 +18,9 @@ emojis = None
 @client.event
 async def on_ready():
     try:  # Comprueba si se puede conectar al bot
-        print('Discord bot succesfully connected')
-    except:
-        print("[!] Couldn't connect, an Error occured")
+        print(f'Login successful, Logged in as {client.user}')
+    except Exception as e:
+        print(f"[!] Couldn't connect, an Error occurred {e}")
     
     # carga el resto de comandos
     for filename in os.listdir("./cogs"):
