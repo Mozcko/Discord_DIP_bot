@@ -19,16 +19,16 @@ emojis = None
 async def on_ready():
     try:  # Comprueba si se puede conectar al bot
         print(f'Login successful, Logged in as {client.user}')
+
+        # carga el resto de comandos
+        for filename in os.listdir("./cogs"):
+            if filename.endswith(".py"):
+                await client.load_extension(f"cogs.{filename[:-3]}")
     except Exception as e:
         print(f"[!] Couldn't connect, an Error occurred {e}")
-    
-    # carga el resto de comandos
-    for filename in os.listdir("./cogs"):
-        if filename.endswith(".py"):
-            await client.load_extension(f"cogs.{filename[:-3]}")
 
 
-# carga los emogis y prepara algunas cosas
+# carga los emojis y prepara algunas cosas
 @client.command()
 async def setup(ctx):
     global emojis

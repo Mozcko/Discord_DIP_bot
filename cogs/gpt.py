@@ -10,8 +10,6 @@ from discord.ext import commands
 
 load_dotenv()
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-
 class Chat(commands.Cog):
     def __init__(self, client):
         self.__AI_TOKEN = os.getenv("OPENAI_API_KEY")

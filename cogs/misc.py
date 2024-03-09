@@ -18,7 +18,7 @@ class Misc(commands.Cog):
         for i in rules:
             pEmbed.add_field(name=i, value=rules[i], inline=False)
         pEmbed.add_field(
-            value=" recuerda que si tienes alguna duda o necesitas ayuda puedes preguntar a cualquiera con el rol de scouter",
+            value=" Recuerda que si tienes dudas puedes contactar con un Admin",
             inline=True)
 
         await message.edit(content=None, embed=pEmbed)
