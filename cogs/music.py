@@ -1,82 +1,96 @@
 import discord
-import asyncio
-from time import sleep
 from discord.ext import commands
-from ytomp3 import give_link, download_vid, find_music_name, remove_all_files, delete_selected_file
-
+import pytube
+from discord import FFmpegPCMAudio
 
 class Music(commands.Cog):
-
     def __init__(self, client):
         self.client = client
+        self.is_playing = False
 
-    @commands.command()
-    async def pause(self, ctx):
-        if ctx.voice_client and ctx.voice_client.is_playing():  # if the music is already playing
-            ctx.voice_client.pause()  # pausing the music
-            await ctx.send("Playback paused.")  # sending confirmation on  channel
-        else:
-            await ctx.send(
-                '[-] An error occured: You have to be in voice channel to use this command')  # if you are not in vc
-
-    @commands.command()
-    async def resume(self, ctx):
-        if ctx.voice_client and ctx.voice_client.is_paused():  # If the music is already paused
-            ctx.voice_client.resume()  # resuming the music
-            await ctx.send("Playback resumed.")  # sending confirmation on  channel
-        else:
-            await ctx.send(
-                '[-] An error occured: You have to be in voice channel to use this command')  # if you are not in vc
-
-    @commands.command()
-    async def leave(self, ctx):
-        if ctx.voice_client:  # if you are in vc
-            await ctx.guild.voice_client.disconnect()  # disconnecting from the vc
-            await ctx.send("Lefted the voice channel")  # sending confirmation on channel
-            sleep(1)
-            remove_all_files(
-                "music")  # deleting the all the files in the folder that  we downloaded to not waste space on your pc
-
-        else:
-            await ctx.send(
-                "[-] An Error occured: You have to be in a voice channel to run this command")  # if you are not in vc
+        # Parametros de FFmpeg
+        self.ydl_opts = {
+            'format': 'bestaudio/best',
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'mp3',
+                'preferredquality': '192',
+            }],
+        }
 
     @commands.command()
     async def join(self, ctx):
-        if ctx.author.voice:
-            channel = ctx.message.author.voice.channel
+        if ctx.author.voice is None:
+            await ctx.send("No estas en un canal de voz")
+            return
+
+        voice_client = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
+        if voice_client is None:
             try:
-                await channel.connect()  # connecting to channel
-            except:
-                await ctx.send("[-] An error occured: Couldn't connect to the channel")  # if there is an error
-
+                voice_client = await ctx.author.voice.channel.connect()
+            except Exception as e:
+                await ctx.send("No pude conectarme al canal de voz")
         else:
-            await ctx.send(
-                "[-] An Error occured: You have to be in a voice channel to run this command")  # if you are not in vc
+            try:
+                await voice_client.move_to(ctx.author.voice.channel)
+            except Exception as e:
+                await ctx.send("No pude moverme al canal de voz")
 
-    @commands.command(name="play")
-    async def play(self, ctx, *, title):
-        download_vid(title)  # Downloading the mp4 of the desired vid
-        voice_channel = ctx.author.voice.channel
+    @commands.command()
+    async def leave(self, ctx):
+        voice_client = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
+        if voice_client.is_connected():
+            await voice_client.disconnect()
+        else:
+            await ctx.send("No estoy conectado a ningun canal de voz")
+   
+    @commands.command()
+    async def play(self, ctx, url):
+        if not ctx.message.author.voice:
+            await ctx.send("No estas en un canal de voz")
+            return
 
-        if not ctx.voice_client:  # if you are not in  vc
-            voice_channel = await voice_channel.connect()  # connecting to vc
+        voice_channel = ctx.message.author.voice.channel
+        voice_client = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
+
+        if not voice_client:
+            voice_client = await ctx.author.voice.channel.connect()
 
         try:
-            async with ctx.typing():
-                player = discord.FFmpegPCMAudio(executable="C:\\ffmpeg\\ffmpeg.exe",
-                                                # hay que cambiarlo para que funcione en linux
-                                                source=f"music/{find_music_name()}")  # executable part is where we downloaded ffmpeg. We are writing our find_mmusic name func because , we want to bot to play our desired song fro the folder
-                ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
-            await ctx.send(f'Now playing: {find_music_name()}')  # sening confirmmation
+            yt = pytube.YouTube(url)
+            stream = yt.streams.filter(only_audio=True).first()
+            audio_file = stream.download()
 
-            while ctx.voice_client.is_playing():
-                await asyncio.sleep(1)
-            delete_selected_file(find_music_name())  # deleting the file after it played
-
+            source = FFmpegPCMAudio(audio_file)
+            voice_client.play(source)
         except Exception as e:
-            await ctx.send(f'Error: {e}')  # sending error
+            await ctx.send("Ocurrió un error al intentar reproducir el audio.")
 
+    @commands.command()
+    async def pause(self, ctx):
+        voice_client = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
+        if voice_client.is_playing():
+            voice_client.pause()
+        else:
+            await ctx.send("No estoy reproduciendo nada en este momento")
+
+    @commands.command()
+    async def resume(self, ctx):
+        voice_client = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
+        if voice_client.is_paused():
+            voice_client.resume()
+        else:
+            await ctx.send("No estaba en pausa")
+
+    @play.error
+    async def play_error(self, ctx, error):
+        if isinstance(error, commands.UserInputError):
+            await ctx.send("URL o comando invalido")
+
+    @join.error
+    async def join_error(self, ctx, error):
+        if isinstance(error, commands.UserInputError):
+            await ctx.send("Necesitas estar en un canal de voz para usar este comando")
 
 async def setup(client):
     await client.add_cog(Music(client))
