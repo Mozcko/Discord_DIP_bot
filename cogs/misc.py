@@ -23,7 +23,7 @@ class Misc(commands.Cog):
 
     #     # itera dentro de las reglas del servidor y las agrega al embed
     #     for i in rules:
-    #         embed.add_field(name=i, value=rules[i], inline=False)
+    #         embed.add_field(name=i, value=rules[i], inline=True)
     #     embed.add_field(
     #         name="",
     #         value=" Recuerda que si tienes dudas puedes contactar con un Admin",
@@ -81,7 +81,7 @@ class Misc(commands.Cog):
 
         # itera dentro de os comandos del servidor y los agrega al embed
         for i in comms:
-            embed.add_field(name=i, value=comms[i], inline=True)
+            embed.add_field(name=i, value=comms[i], inline=False)
 
         # modifica el mensaje temporal y envía la modificación 
         await message.edit(content=None, embed=embed)
