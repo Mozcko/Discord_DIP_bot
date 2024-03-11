@@ -2,6 +2,7 @@ import discord
 import asyncio
 from random import randint
 from discord.ext import commands
+from discord import Embed
 from constants import rules, comms
 
 
@@ -12,9 +13,15 @@ class Misc(commands.Cog):
     # # muestra el conjunto de reglas del servidor
     # @commands.command()
     # async def reglas(self, ctx):
+    #     # crea un mensaje temporal en lo que se recibe respuesta
     #     message = await ctx.send("writing rules...")
+
     #     color = randint(0, 0xFFFFFF)
+
+    #     # crea un embed vacío
     #     embed = discord.Embed(title="Rules", color=color)
+
+    #     # itera dentro de las reglas del servidor y las agrega al embed
     #     for i in rules:
     #         embed.add_field(name=i, value=rules[i], inline=False)
     #     embed.add_field(
@@ -22,39 +29,63 @@ class Misc(commands.Cog):
     #         value=" Recuerda que si tienes dudas puedes contactar con un Admin",
     #         inline=True)
 
+    #     # modifica el mensaje temporal y envía la modificación 
     #     await message.edit(content=None, embed=embed)
-    #     await ctx.message.add_reaction('📜')  # agrega un emogi
+    #     await ctx.message.add_reaction('📜')  # agrega un emoji
+
 
     # comando de ayuda personalizado
     @commands.command()
     async def help(self, ctx) -> None:
+        # crea un mensaje temporal en lo que se recibe respuesta
         message = await ctx.send("escribiendo el comando de ayuda")
+
         color: int = randint(0, 0xFFFFFF)
-        embed = discord.Embed(title="Commandos utilizables", color=color)
+        
+        # crea un Embed vacío
+        embed = Embed(title="Commandos utilizables", color=color)
+
+        # itera dentro de os comandos del servidor y los agrega al embed
         for i in comms:
             embed.add_field(name=i, value=comms[i], inline=True)
 
+        # modifica el mensaje temporal y envía la modificación 
         await message.edit(content=None, embed=embed)
-        await ctx.message.add_reaction('👍')  # agrega un emogi
+        await ctx.message.add_reaction('👍')  # agrega un emoji
 
-    # envia un link de invitacion que no expira
+    # crea y envía un link de invitación temporal para el servidor
     @commands.command()
     async def invite(self, ctx) -> None:
-        await ctx.send("usa este enlace para invitar a otros")
-        await ctx.send("")  # falta agregar el link
-        await ctx.message.add_reaction('')  # agrega un emogi
+        # crea un mensaje temporal en lo que se recibe respuesta
+        message = await ctx.send("Generando link de invitación")
 
-    # buzon de quejas (no sirve)
+        color: int = randint(0, 0xFFFFFF)
+
+        # crea el link de invitación temporal
+        link: str = await ctx.channel.create_invite(max_age = 300)
+
+        # crea un Embed de discord con el link de invitación
+        embed = Embed(
+            title="usa este enlace para invitar a otros",
+            description=link,
+            color=color
+        )
+
+        # modifica el mensaje temporal y envía la modificación 
+        await message.edit(content=None, embed=embed)
+        await ctx.message.add_reaction('🔗')  # agrega un emoji
+
+    # envía un embed con un link a un google forms para buzón de quejas
     @commands.command()
     async def sugerencias(self, ctx) -> None:
         color: int = randint(0, 0xFFFFFF)
         link: str = ""  # falta el link
-        embeed = discord.Embed(
+        embed = Embed(
             title="si tienes alguna sugerencia, usa este link para mandarla",
             description=link,
             color = color)
-        await ctx.send(embed=embeed)
+        await ctx.send(embed=embed)
 
-
+# función de Setup para la extension de comandos
 async def setup(client) -> None:
     await client.add_cog(Misc(client))
