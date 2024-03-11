@@ -90,23 +90,13 @@ class Misc(commands.Cog):
     # crea y envía un link de invitación temporal para el servidor
     @commands.command()
     async def invite(self, ctx) -> None:
-        # crea un mensaje temporal en lo que se recibe respuesta
-        message = await ctx.send("Generando link de invitación")
-
-        color: int = randint(0, 0xFFFFFF)
-
         # crea el link de invitación temporal
         link: str = await ctx.channel.create_invite(max_age = 300)
 
-        # crea un Embed de discord con el link de invitación
-        embed = Embed(
-            title="usa este enlace para invitar a otros",
-            description=link,
-            color=color
-        )
+        # crea el mensaje con el link de invitación temporal
+        content = f"usa este enlace para invitar a otros {link}"
 
-        # modifica el mensaje temporal y envía la modificación 
-        await message.edit(content=None, embed=embed)
+        await ctx.send(content)
         await ctx.message.add_reaction('🔗')  # agrega un emoji
 
     # envía un embed con un link a un google forms para buzón de quejas
