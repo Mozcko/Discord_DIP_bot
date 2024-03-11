@@ -62,6 +62,7 @@ class Mod(commands.Cog):
     #  mutea a una persona (le agrega un rol que le impide mandar mensajes)
     @commands.command()
     @commands.has_permissions(manage_messages=True)  # comprueba los permisos del usuario
+    @commands.has_permissions(manage_roles=True)
     async def mute(self, ctx, member: discord.Member):
         # obtiene el rol que mutea a la persona
         muted_role = ctx.guild.get_role()  # hace falta el ID del rol
@@ -74,6 +75,7 @@ class Mod(commands.Cog):
     # des mutea a una persona (le quita el rol de muteado)
     @commands.command()
     @commands.has_permissions(manage_messages=True)  # comprueba los permisos del usuario
+    @commands.has_permissions(manage_roles=True)
     async def unmute(self, ctx, member: discord.Member):
         # obtiene el rol que mutea a la persona
         muted_role = ctx.guild.get_role()  # hace falta el ID del rol

@@ -3,7 +3,7 @@ import asyncio
 from random import randint
 from discord.ext import commands
 from discord import Embed
-from constants import rules, comms
+from constants import rules, comms, exp_comms
 
 
 class Misc(commands.Cog):
@@ -36,12 +36,46 @@ class Misc(commands.Cog):
 
     # comando de ayuda personalizado
     @commands.command()
-    async def help(self, ctx) -> None:
+    async def help(self, ctx, command=None) -> None:
+        color: int = randint(0, 0xFFFFFF)
+        
+        # revisa si se pidió información sobre un comando especifico
+        if command is not None:
+
+            # revisa que se tenga registro del comando
+            if command not in exp_comms:
+                await ctx.send("Comando no encontrado")
+                return
+            
+            # encuentra el comando dentro de exp_comms
+            comando = exp_comms[command]
+
+            # crea un Embed vacío
+            embed = Embed(title=f"Explicación del comando {command}", color=color)
+
+            # apartado de permisos
+            if comando["permission"] is not None:
+                embed.add_field(name="Permisos para usarlo", value=comando["permission"], inline=False)
+
+            # apartado de descripción
+            if comando["description"] is not None:
+                embed.add_field(name="Descripción del comando", value=comando["description"], inline=False)
+
+            # apartado de uso
+            if comando["usage"] is not None:
+                embed.add_field(name="Ejemplo de Uso", value=comando["usage"], inline=False)
+
+            # apartado de Special
+            if comando["Special"] is not None:
+                embed.add_field(name="Casos especiales", value=comando["Special"], inline=False)
+
+            await ctx.send(embed=embed)
+            await ctx.message.add_reaction('👍')  # agrega un emoji
+            return
+
         # crea un mensaje temporal en lo que se recibe respuesta
         message = await ctx.send("escribiendo el comando de ayuda")
 
-        color: int = randint(0, 0xFFFFFF)
-        
         # crea un Embed vacío
         embed = Embed(title="Commandos utilizables", color=color)
 
