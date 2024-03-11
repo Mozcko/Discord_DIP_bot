@@ -1,17 +1,15 @@
 import discord
 import os
-import asyncio
-from discord.ext import commands, tasks
-from discord import Color
+from discord.ext import commands
 from dotenv import load_dotenv
 
 load_dotenv()
 
 intents = discord.Intents.all()  # permite todos los intents
 intents.members = True
-help_command = commands.DefaultHelpCommand(no_category="Micelanea")  # se crea un comando de ayuda
+help_command = commands.DefaultHelpCommand(no_category="Miscelánea")  # se crea un comando de ayuda
 client = commands.Bot(command_prefix=os.getenv("PREFIX"), help_command=help_command, intents=intents)
-client.remove_command("help")  # se remueve el comando por defecto (se hara uno mas adelante)
+client.remove_command("help")  # se remueve el comando por defecto (se hará uno mas adelante)
 emojis = None
 
 
@@ -28,14 +26,14 @@ async def on_ready():
         print(f"[!] Couldn't connect, an Error occurred {e}")
 
 
-# carga los emojis y prepara algunas cosas
+# carga los emojis personalizados del server
 @client.command()
 async def setup(ctx):
     global emojis
     if not emojis:
         emojis = {e.name: str(e) for e in ctx.bot.emojis}
     await ctx.send("Setup completo")
-    await ctx.message.add_reaction('')
+    await ctx.message.add_reaction('👍')
 
 
 if __name__ == '__main__':
