@@ -27,9 +27,9 @@ class Misc(commands.Cog):
 
     # comando de ayuda personalizado
     @commands.command()
-    async def help(self, ctx):
+    async def help(self, ctx) -> None:
         message = await ctx.send("escribiendo el comando de ayuda")
-        color = randint(0, 0xFFFFFF)
+        color: int = randint(0, 0xFFFFFF)
         embed = discord.Embed(title="Commandos utilizables", color=color)
         for i in comms:
             embed.add_field(name=i, value=comms[i], inline=True)
@@ -39,20 +39,22 @@ class Misc(commands.Cog):
 
     # envia un link de invitacion que no expira
     @commands.command()
-    async def invite(self, ctx):
+    async def invite(self, ctx) -> None:
         await ctx.send("usa este enlace para invitar a otros")
         await ctx.send("")  # falta agregar el link
         await ctx.message.add_reaction('')  # agrega un emogi
 
     # buzon de quejas (no sirve)
     @commands.command()
-    async def sugerencias(self, ctx):
+    async def sugerencias(self, ctx) -> None:
+        color: int = randint(0, 0xFFFFFF)
+        link: str = ""  # falta el link
         embeed = discord.Embed(
             title="si tienes alguna sugerencia, usa este link para mandarla",
-            description="",  # falta el link
-            color=randint(0, 0xFFFFFF), )
+            description=link,
+            color = color)
         await ctx.send(embed=embeed)
 
 
-async def setup(client):
+async def setup(client) -> None:
     await client.add_cog(Misc(client))
